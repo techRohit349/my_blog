@@ -27,7 +27,7 @@ SECRET_KEY = '!_=nb$jsg^md@*xsgnb%25=#pbmpij5e)=e7zt%pq$1@!837&3'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1' , 'aapno-blog.herokuapp.com']
+ALLOWED_HOSTS = ['aapno-blog.herokuapp.com' , 'localhost']
 
 
 # Application definition
@@ -125,10 +125,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, ‘staticfiles’)
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR,'static') ,
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, ‘static’)
 MESSAGE_TAGS = {
     messages.ERROR: 'danger'
     
