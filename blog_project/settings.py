@@ -27,7 +27,7 @@ SECRET_KEY = '!_=nb$jsg^md@*xsgnb%25=#pbmpij5e)=e7zt%pq$1@!837&3'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1' , 'aapno-blog.herokuapp.com']
 
 
 # Application definition
