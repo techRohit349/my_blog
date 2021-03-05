@@ -1,0 +1,50 @@
+{% extends 'basic.html' %}
+
+{% block title %} Blog {%endblock title%}
+
+{% block js %}
+
+{% load humanize %} <!--for template filter -->
+<script>
+  
+let previews=document.getElementsByClassName('preview');
+Array.from(previews).forEach((element)=>{
+    element.innerHTML = element.innerText;
+}) ;
+</script>
+{% endblock js %}
+
+{%  block blog %} active {% endblock blog %}
+{% block css %}
+  <style>
+    .cnt{
+      text-align: justify;
+    }
+  </style>
+{% endblock %}
+{% block body %}
+
+<div class="container my-4">
+    <h3>Blog Posts</h3>
+    {% for post in allpost %}
+<div class="col-md-12">
+    <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+      <div class="col p-4 d-flex flex-column position-static">
+        <strong class="d-inline-block mb-2 text-success">{{post.author}}</strong>
+        <h2 class="mb-0">{{post.title}}</h2>
+        <div class="mb-1 text-muted"> {{post.timestamp | naturaltime }} ({{post.views}} views)</div>
+        <p class="mb-auto cnt"> <div class="preview"> {{post.content|safe | truncatechars:150}} </div></p>
+        <div>
+        <a href="{{post.slug}}" class="stretched-link btn btn-primary my-3">Continue reading</a>
+    </div>
+      </div>
+     
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock body %}
+
+
+

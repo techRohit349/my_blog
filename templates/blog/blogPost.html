@@ -1,0 +1,160 @@
+{% extends 'basic.html' %}
+
+{% load humanize %} <!--for template filter -->
+{% load extras %}
+{% block title %} Blog Post {%endblock title%}
+{% block css %}
+<style>
+  p ,h2 , h3 , h4 , h5 ,  .cnt {
+    text-align: justify;
+    margin: 10px;
+  }
+
+  hr {
+    border-top: 1px solid #000 !important;
+  }
+
+  .card {
+    border: none;
+    box-shadow: 5px 6px 6px 2px #e9ecef;
+    border-radius: 4px;
+    background: rgba(143, 143, 150, 0.2);
+  }
+
+  #comid {
+    text-align: justify;
+  }
+</style>
+{% endblock %}
+{% block body %}
+
+<div class="container my-4">
+  <div class=" row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+    <div class="col-md-12">
+
+      <article class="blog-post">
+        <h2 class="blog-post-title m-2">{{post.title}}</h2>
+        <p class="blog-post-meta m-2">{{post.timestamp}} by <a href="/about " class="text-decoration-none"><i>{{post.author}}</i></a></p>
+
+        <p class="mx-4 cnt">{{post.content|safe }}</p>
+
+
+      </article><!-- /.blog-post -->
+
+    </div>
+
+  </div><!-- /.row -->
+
+</div> <!--  /.container -->
+<!-- Comment modal -->
+<div class="container my-4">
+  <div class="row">
+    <!-- Button trigger modal -->
+    <div class="col-md-10">
+      <h2>Comments ({{comments.count}})</h2>
+    </div>
+    {% if user.is_authenticated %}
+    <div class="col-md-2"><button type="button" class="btn btn-primary" data-bs-toggle="modal"
+        data-bs-target="#exampleModal">
+        Add a comment
+      </button>
+    </div>
+  </div>
+
+  <!-- Comment Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Comment</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body col-md-12">
+          <form action="/blog/postComment" method="POST">
+            {% csrf_token %}
+            <textarea class="form-control" name="comment" id="commment" placeholder="Write your comment here!"
+              style="height: 130px"></textarea><br />
+                <input type="hidden" name="parentSno" value="">
+                <input type="hidden" name="postSno" value="{{post.sno}}">
+            <input type="submit" class="btn btn-primary" value="Post">
+          </form>
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr>
+  {% else %}
+  <h4> Login into blog to comment</h4>
+  {% endif %}
+</div>
+<!-- display comments -->
+
+
+{% for comment in comments %}
+<div class="container mt-3 mb-3">
+  <div class="row d-flex justify-content-center">
+    <div class="col-md-9">
+
+      <div class="card p-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="user d-flex flex-row align-items-center"> <img src="/static/img/comment.png" width="50" height="51"
+              class="user-img rounded-circle mr-2" style="border: 2px solid rgb(241, 229, 229) ;"> <span><small
+                class="font-weight-bold  mx-2"><b>{{comment.user.username}}</b></small> </span> </div>
+          <small class="badge rounded-pill bg-dark">{{comment.timestamp | naturaltime}}</small>
+        </div>
+        <div class="action d-flex justify-content-center mt-2 align-items-center">
+          <div class="mx-5">
+            <p class="font-weight-bold " id="comid">
+              {{comment.comment}}
+            </p>
+          </div>
+
+        </div>
+        {% if user.is_authenticated %}
+        <div>
+          <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#reply{{comment.sno}}"
+            aria-expanded="false" aria-controls="reply">
+            Reply
+          </button>
+          </p>
+          <div class="collapse" id="reply{{comment.sno}}">
+            <div class="card card-body">
+              <form action="/blog/postComment" method="POST">
+                {% csrf_token %}
+                <textarea class="form-control" name="comment" id="comment" placeholder="Write you reply here!"
+                  style="height: 130px"></textarea><br />
+                <input type="hidden" name="parentSno" value="{{comment.sno}}">
+                <input type="hidden" name="postSno" value="{{post.sno}}">
+                <input type="submit" class="btn btn-primary" value="Reply">
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        <div class="replies  my-2 rounded " style="margin-left: 100px;">
+          {% for reply in replyDict|get_val:comment.sno %}
+          <div class="row bg-danger my-3 rounded " >
+            <div class="col-md-1 ">
+                <!-- <img class="rounded mx-auto d-block w-75 my-2 border border-dark p-2" src="/static/img/RK.jpg" alt="user"> -->
+                <img src="/static/img/reply.png" width="50" height="51" class="user-img rounded-circle mx-1 my-2">
+            </div>
+            <div class="col-md-11">
+                <div class="col-md-11 ">
+                    <b> {{reply.user.username}} </b> <span class="badge badge-secondary ">{{reply.timestamp| naturaltime}}</span>
+                    <div>{{reply.comment}}</div>
+                </div>
+                
+            </div>
+        </div>
+      
+
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endblock body %}

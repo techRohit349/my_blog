@@ -1,0 +1,45 @@
+{% extends 'basic.html' %}
+{% block title %} Search {%endblock title%}
+
+{% block body %}
+
+  <div class="container my-4">
+    <h3>Search Related: {% if result|length > 0 %} {{query}} {% endif %} {% if result|length < 1%} No search result found {% endif %}</h3>
+   
+    {% if result|length < 1%}  
+       <h6> Your search query: <b>{{query}}</b> did not match any documents. </h6>
+        <h5> Suggestions: </br> </h5>
+        <ul> <li>Try different keywords. </li> </ul>
+     {% endif %}
+
+     {% block js %}
+
+{% load humanize %} <!--for template filter -->
+<script>
+  
+let previews=document.getElementsByClassName('preview');
+Array.from(previews).forEach((element)=>{
+    element.innerHTML = element.innerText;
+}) ;
+</script>
+{% endblock js %}
+
+    {% for post in result %}
+<div class="col-md-12 my-3">
+    <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+      <div class="col p-4 d-flex flex-column position-static">
+        <strong class="d-inline-block mb-2 text-success">{{post.author}}</strong>
+        <h3 class="mb-0">{{post.title}}</h3>
+        <div class="mb-1 text-muted"> {{post.timestamp}}</div>
+        <p class="mb-auto cnt"> <div class="preview"> {{post.content|safe | truncatechars:420}} </div></p>
+        <div>
+        <a href="/blog/{{post.slug}}" class="stretched-link btn btn-primary my-3">Continue reading</a>
+    </div>
+      </div>
+     
+    </div>
+  </div>
+  {% endfor %}
+</div>
+  
+{% endblock body %}
